@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -11,6 +12,7 @@ class AuthController extends Controller
     public function showUsers(Request $request)
     {
         $user = User::all();
+        // $user = Auth::user();
         return $this->successResponse($user, '', 'user List');
     }
 
@@ -36,6 +38,23 @@ class AuthController extends Controller
             return $this->successResponse($user, $token, 'User Created');
         }
         return $this->errorResponse('fail Create User');
+    }
+
+    public function login(Request $request)
+    {
+        $validator = $request->validate([
+            'email' => 'required|string',
+            'password' => 'required|string'
+        ]);
+
+        $user = User::where('email', $validator['email'])->first();
+
+        if (!$user || !Hash::check($validator['password'], $user->password)) {
+            return $this->errorResponse('Fail Credential');
+        } else {
+            $token = $user->createToken($validator['email'])->plainTextToken;
+            return $this->successResponse($user, $token, 'Login Good');
+        }
     }
 
 

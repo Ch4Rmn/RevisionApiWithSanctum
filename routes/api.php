@@ -26,8 +26,11 @@ use App\Http\Controllers\ProductController;
 // });
 // User
 Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);
+
 Route::get('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::get('showUsers', [AuthController::class, 'showUsers'])->middleware('auth:sanctum');
+Route::get('showUsers', [AuthController::class, 'showUsers']);
+// ->middleware('auth:sanctum');
 
 
 Route::get('search/{name}', [ProductController::class, 'search'])->name('product#Search');
